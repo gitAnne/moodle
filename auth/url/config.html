@@ -1,0 +1,88 @@
+<?php
+	global $CFG;
+	$incfile = $CFG->dirroot . '/auth/url/locallib.php';
+	include_once($incfile);
+
+    // Set to defaults if undefined.
+    if (!isset($config->incorrectcredentialsurl)) {
+        $config->incorrectcredentialsurl = 'https://programmaleiderschap.nl/moodle/feedback/bad_credentials/{username}/{password}/{errorMessage}';
+    }
+?>
+<table cellspacing="0" cellpadding="5" border="0">
+    <tr>
+        <td colspan="3">
+            <h3><?php print_string('authurl_settings', 'auth_url') ?></h3>
+        </td>
+    </tr>
+    <tr>
+        <td align="right">
+            <label for="incorrectcredentialsurl">
+                <?php print_string('incorrectcredentialsurl', 'auth_url') ?>
+            </label>
+        </td>
+        <td>
+			<input id="incorrectcredentialsurl" name="incorrectcredentialsurl" type="text" size="110" maxsize="255" value="<?php echo $config->incorrectcredentialsurl?>" />
+	        <?php
+	
+	        if (isset($err["incorrectcredentialsurl"])) {
+	            echo $OUTPUT->error_text($err["incorrectcredentialsurl"]);
+	        }
+	
+	        ?>
+        </td>
+        <td><?php print_string('incorrectcredentialsurl_desc', 'auth_url') ?></td>
+    </tr>
+    <tr>
+        <td align="left" colspan="3">
+        	<hr />
+        </td>
+    </tr>
+	
+	<?php
+	$ssoapphtml = \auth_url\getSsoAppHtml(); 
+	echo $ssoapphtml;
+	?>
+    
+    <tr>
+        <td align="left" colspan="3">
+        	<hr />
+        </td>
+    </tr>
+	
+	<tr>
+        <td align="right">
+            <label for="newapp">
+                <?php print_string('newapp', 'auth_url') ?>
+            </label>
+        </td>
+        <td>
+			<input id="newappname" name="newappname" type="text" size="110" maxsize="255" value="" />
+	        <?php
+	
+	        if (isset($err["newappname"])) {
+	            echo $OUTPUT->error_text($err["newappname"]);
+	        }
+	
+	        ?>
+        </td>
+        <td><?php print_string('newappname_desc', 'auth_url') ?></td>
+    </tr>
+    <tr>
+        <td align="right" colspan="2">
+        	<input id="AddApp" name="AddApp" type="submit" value="<?php print_string('addapp', 'auth_url') ?>" />
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+	
+	<tr>
+        <td align="left" colspan="3">
+        	<hr />
+        </td>
+    </tr>
+
+</table>
+<table cellspacing="0" cellpadding="5" border="0">
+	
+    <?php print_auth_lock_options($this->authtype, $user_fields, get_string('auth_fieldlocks_help', 'auth'), false, false) ?>
+	
+</table>

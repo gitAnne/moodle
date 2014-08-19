@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="auth/url/db" VERSION="20140805" COMMENT="XMLDB file for Moodle auth/url"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="auth_url" COMMENT="This table saves information about an instance of auth_url.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="appname"/>
+        <FIELD NAME="appname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The app name to grant access." PREVIOUS="id" NEXT="token"/>
+        <FIELD NAME="token" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The token used byu the app to gain access." PREVIOUS="appname"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this instance."/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_auurl_app" UNIQUE="false" FIELDS="appname" COMMENT="The appname this instance belongs to."  NEXT="ix_auurl_tok"/>
+        <INDEX NAME="ix_auurl_tok" UNIQUE="false" FIELDS="token" COMMENT="The token this corocas instance belongs to."  PREVIOUS="ix_auurl_app"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
