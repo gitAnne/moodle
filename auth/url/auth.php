@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/authlib.php');
 
-include($CFG->dirroot . '/auth/url/classes/event/user_login_failed.php');
+include_once($CFG->dirroot . '/auth/url/classes/event/user_login_failed.php');
 $incfile = $CFG->dirroot . '/auth/url/locallib.php';
 include_once($incfile);
 
@@ -73,8 +73,18 @@ class auth_plugin_url extends auth_plugin_base {
         if (!$user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
             return false;
         }
-        $succes = ($user->password == $password); 
-        return $succes;
+        // $succes = ($user->password == $password);
+        $plainpassword = $this->get_plain_password($password);
+        if (!validate_internal_user_password($user, $plainpassword)) {
+         return false;
+        }
+        return true;
+    }
+    
+    function get_plain_password($password) {
+      // Assume password provided is base64 encoded
+      $plainpassword = base64_decode($password);
+      return $plainpassword;
     }
 
     /**
@@ -115,7 +125,6 @@ class auth_plugin_url extends auth_plugin_base {
      * @return bool
      */
     function can_change_password() {
-      return true;
       return false;
     }
 
@@ -197,7 +206,7 @@ class auth_plugin_url extends auth_plugin_base {
       }
       
       if (empty($config->incorrectcredentialsurl)) {
-        $config->incorrectcredentialsurl = 'https://programmaleiderschap.nl/moodle/feedback/bad_credentials/{username}/{password}/{errorMessage}';
+        $config->incorrectcred= 'https://programmaleiderschap.nl/moodle/feedback/bad_credentials/{username}/{password}/{errorMessage}';
       }
       set_config('incorrectcredentialsurl', $config->incorrectcredentialsurl, self::COMPONENT_NAME);
       
@@ -248,21 +257,6 @@ class auth_plugin_url extends auth_plugin_base {
       global $frm;  // can be used to override submitted login form
       global $user; // can be used to replace authenticate_user_login()
       //override if needed
-      $username = optional_param('username', '', PARAM_RAW);
-      $password = optional_param('password', '', PARAM_RAW);
-      if (!empty($username) && !empty($password)) {
-        $frm->username = $username;
-        $frm->password = $password;
-        $user = $DB->get_record('user', array('username' => $username));
-      }
-      $courseid = optional_param('courseid', '', PARAM_RAW);
-      $sectionid = optional_param('sectionid', '', PARAM_RAW);
-      if (!empty($courseid)) {
-        $SESSION->wantsurl = $CFG->wwwroot . '/course/view.php?id=' . $courseid;
-        if (!empty($sectionid)) {
-          $SESSION->wantsurl .= '&section-' . $sectionid;
-        }
-      }
     }
     
     

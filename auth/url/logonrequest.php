@@ -6,7 +6,6 @@ include($conffile);
 
 include($CFG->dirroot . '/auth/url/classes/event/user_login_failed.php');
 
-
 // Get the parameters
 // Although they are not all optional, we do not want Moodle to through exceptions
 $token = optional_param('token', '', PARAM_RAW);
@@ -43,17 +42,6 @@ if (!$validuser) {
   redirect($baselogin);  
 }
 
-// Check if the user has the auth_url als authentication method
-// If not log and die
-$validauth = false;
-if ($user !== false) {
-  $validauth = ($user->auth == 'url');
-}
-if (!$validauth) {
-  auth_url_log("User: '{$username}' has wrong auth method set (Request IP: " . getremoteaddr() . ")");
-  redirect($baselogin);  
-}
-
 // Check if a password is present
 // If not log and die
 $passwordpresent = (isset($password) && (!empty($password)));
@@ -67,7 +55,8 @@ if (!$passwordpresent) {
 // log, 
 // call url
 // show response stating that the combination of username/password does not exist
-$correctpassword = ($user->password == $password);
+$auth_url = get_auth_plugin('url');
+$correctpassword = $auth_url->user_login($username, $password);
 if (!$correctpassword) {
   unset($user);
   $config = get_config('auth_url');

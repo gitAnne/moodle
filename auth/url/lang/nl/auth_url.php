@@ -23,7 +23,7 @@
  */
 // TODO No expiration
 
-$string['auth_urldescription'] = 'Deze authenticatie methode maakt het mogelijk om mbv een url aanroep in te loggenmet het juist token, gebruikersnaame en (encoded) password.<br/> Indien cusrus id (courseid) en optioneel sectie nummer (section id) als paramter worden meegeven wordt er geforward naar de betreffende cursus en sectie.<br/> Voorbeeld: http://dev-moodle-2-7-0/auth/url/logonrequest.php?username=user003&password=$2y$10$Q9ofcE71sQpKJKHcYHG.ZO51QmGaoHZz7O.8gBrxKvJeMXZj4Cx/G&token=5b1a0afd40a09e4cf93d447f5c6aae4637332c89d57e332b58ed6dbf4f0de932&courseid=2&sectionid=7';
+$string['auth_urldescription'] = 'Deze authenticatie methode maakt het mogelijk om mbv een url aanroep in te loggenmet het juist token, gebruikersnaame en (encoded) password.<br/> Indien cusrus id (courseid) en optioneel sectie nummer (section id) als paramter worden meegeven wordt er geforward naar de betreffende cursus en sectie.<br/> Voorbeeld: http://dev-moodle-2-7-0/auth/url/logonrequest.php?username=user003&password=dXBhZG0xbi1NMDBkbDM=&token=5b1a0afd40a09e4cf93d447f5c6aae4637332c89d57e332b58ed6dbf4f0de932&courseid=2&sectionid=7';
 $string['pluginname'] = 'URL requests';
 
 $string['eventuserloginfailed'] = 'Gebruiker inloggen mislukt';
