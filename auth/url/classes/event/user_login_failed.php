@@ -69,7 +69,10 @@ class user_login_failed extends \core\event\base {
      */
     public function get_description() {
         // Note that username could be any random user input.
-        $username = s($this->other['username']);
+        $username = '';
+        if (isset($this->other['username'])) {
+          $username = s($this->other['username']);
+        } 
         $description = "Login failed for ";
         if (!empty($username)) {
           $description .= "the username '{$username}' for "; 
