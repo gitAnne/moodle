@@ -6,6 +6,7 @@ include($conffile);
 
 include($CFG->dirroot . '/auth/url/classes/event/user_login_failed.php');
 
+
 // Get the parameters
 // Although they are not all optional, we do not want Moodle to through exceptions
 $token = optional_param('token', '', PARAM_RAW);
@@ -13,6 +14,8 @@ $username = optional_param('username', '', PARAM_RAW);
 $password = optional_param('password', '', PARAM_RAW);
 $courseid = optional_param('courseid', '', PARAM_RAW);
 $sectionid = optional_param('sectionid', '', PARAM_RAW);
+
+$baselogin = $CFG->wwwroot . "/login/index.php?username={$username}&password={$password}";
 
 // Check if token parameter is present and valid
 // If not log and die
@@ -25,7 +28,7 @@ if (!empty($token)) {
 }
 if (!$validtoken) {
   auth_url_log("Invalid token used: '{$token}' (Request IP: " . getremoteaddr() . ")");
-  die();  
+  redirect($baselogin);  
 }
 
 // Check if username present and exists
@@ -37,7 +40,7 @@ if (!empty($username)) {
 }
 if (!$validuser) {
   auth_url_log("Invalid user: '{$username}' (Request IP: " . getremoteaddr() . ")");
-  die();
+  redirect($baselogin);  
 }
 
 // Check if the user has the auth_url als authentication method
@@ -48,7 +51,7 @@ if ($user !== false) {
 }
 if (!$validauth) {
   auth_url_log("User: '{$username}' has wrong auth method set (Request IP: " . getremoteaddr() . ")");
-  die();
+  redirect($baselogin);  
 }
 
 // Check if a password is present
@@ -56,7 +59,7 @@ if (!$validauth) {
 $passwordpresent = (isset($password) && (!empty($password)));
 if (!$passwordpresent) {
   auth_url_log("User: '{$username}' provided no password (Request IP: " . getremoteaddr() . ")");
-  die();
+  redirect($baselogin);  
 }
 
 // Check if password is correct for the user
@@ -66,6 +69,7 @@ if (!$passwordpresent) {
 // show response stating that the combination of username/password does not exist
 $correctpassword = ($user->password == $password);
 if (!$correctpassword) {
+  unset($user);
   $config = get_config('auth_url');
   
   $errormess = "Username and password combination was not found!";
@@ -75,7 +79,7 @@ if (!$correctpassword) {
   $incorrectcredentialsurl = str_replace('{errorMessage}', $errormess, $incorrectcredentialsurl);
   auth_url_log("User: '{$username}' provided wrong password: '{$password}' (Request IP: " . getremoteaddr() . ")");
   postURL($incorrectcredentialsurl, array('username' => $username, 'password' => $password));
-  die($errormess);
+  redirect($baselogin);  
 }
 
 // Check if courseid present and valid
