@@ -33,6 +33,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class enrol_url_plugin extends enrol_plugin {
   
+    const FIELD_FILTER_CONDITION = 'condition';
+    const FIELD_FILTER_VALUE = 'value';
+    const FIELD_FILTER_NONE = 'none';
+    
     const FIELD_FILTER_IGNORE = -1;
     const FIELD_FILTER_CONTAINS = 1;
     const FIELD_FILTER_NOT_CONTAINS = 0;

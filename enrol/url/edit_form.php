@@ -66,24 +66,28 @@ class enrol_url_edit_form extends moodleform {
           
         }
         
-        $cnt = 0;
         $attributes = array('size' => '110', 'maxsize' => 255);
         $filteroptions = array($plugin::FIELD_FILTER_NOT_CONTAINS => get_string('filterfield_option_not_contains', 'enrol_url'),
                               $plugin::FIELD_FILTER_CONTAINS => get_string('filterfield_option_contains', 'enrol_url'),
                               $plugin::FIELD_FILTER_IGNORE   => get_string('filterfield_option_ignore', 'enrol_url'));
         foreach ($filterfields as $filterfield) {
-          if (!empty($filterfield) && ($filterfield != 'none')) {
-            $cnt++;
+          if (!empty($filterfield) && ($filterfield != $plugin::FIELD_FILTER_NONE)) {
+            if (!isset($storedfilters[$filterfield][$plugin::FIELD_FILTER_CONDITION])) {
+              $storedfilters[$filterfield][$plugin::FIELD_FILTER_CONDITION] = $plugin::FIELD_FILTER_IGNORE; 
+            }
+            if (!isset($storedfilters[$filterfield][$plugin::FIELD_FILTER_VALUE])) {
+              $storedfilters[$filterfield][$plugin::FIELD_FILTER_VALUE] = ''; 
+            }
             $filterarray = array();
-            $filterarray[] =& $mform->createElement('select', $filterfield . '[condition]', '', $filteroptions);
-            $filterarray[] =& $mform->createElement('text', $filterfield . '7', '', $attributes);
+            $filterarray[] =& $mform->createElement('select', 'filterfields[' . $filterfield . ']['. $plugin::FIELD_FILTER_CONDITION . ']', '', $filteroptions);
+            $filterarray[] =& $mform->createElement('text', 'filterfields[' . $filterfield . ']['. $plugin::FIELD_FILTER_VALUE . ']', '', $attributes);
             
-            $mform->addGroup($filterarray, 'filterar' . $cnt, $filterfield, array(' '), false);
+            $mform->addGroup($filterarray, 'filterar_' . $filterfield, $filterfield, array(' '), false);
             
-            $mform->addHelpButton('filterar' . $cnt, 'filterfield', 'enrol_url');
-            $mform->setDefault($filterfield . '[condition]', ENROL_INSTANCE_DISABLED);
-            $mform->setType($filterfield . '7', PARAM_RAW);
-            $mform->setDefault($filterfield . '7', 'filtertext - ' . $cnt);
+            $mform->addHelpButton('filterar_' . $filterfield, 'filterfield', 'enrol_url');
+            $mform->setDefault('filterfields[' . $filterfield . ']['. $plugin::FIELD_FILTER_CONDITION . ']', $storedfilters[$filterfield][$plugin::FIELD_FILTER_CONDITION]);
+            $mform->setType('filterfields[' . $filterfield . ']['. $plugin::FIELD_FILTER_VALUE . ']', PARAM_RAW);
+            $mform->setDefault('filterfields[' . $filterfield . ']['. $plugin::FIELD_FILTER_VALUE . ']', $storedfilters[$filterfield][$plugin::FIELD_FILTER_VALUE]);
             
           }
         }

@@ -52,11 +52,6 @@ if ($instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'enrol
             $plugin->delete_instance($del);
         }
     }
-    // Merge these two settings to one value for the single selection element.
-    /*if ($instance->notifyall and $instance->expirynotify) {
-        $instance->expirynotify = 2;
-    }
-    unset($instance->notifyall);*/
 
 } else {
     require_capability('moodle/course:enrolconfig', $context);
@@ -65,8 +60,6 @@ if ($instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'enrol
     $instance = new stdClass();
     $instance->id              = null;
     $instance->courseid        = $course->id;
-    /*$instance->expirynotify    = $plugin->get_config('expirynotify');
-    $instance->expirythreshold = $plugin->get_config('expirythreshold');*/
 }
 
 $mform = new enrol_url_edit_form(null, array($instance, $plugin, $context));
@@ -75,24 +68,29 @@ if ($mform->is_cancelled()) {
     redirect($return);
 
 } else if ($data = $mform->get_data()) {
-    /*if ($data->expirynotify == 2) {
-        $data->expirynotify = 1;
-        $data->notifyall = 1;
-    } else {
-        $data->notifyall = 0;
+  if (isset($data->filterfields) && is_array($data->filterfields) && count($data->filterfields) > 0) {
+    $storedfilters = serialize($data->filterfields);
+    foreach ($data->filterfields as $fieldname => $condition_def) {
+      if (isset($condition_def) && is_array($condition_def) && count($condition_def) == 2) {
+        $condition = $condition_def[$plugin::FIELD_FILTER_CONDITION];
+        $value = $condition_def[$plugin::FIELD_FILTER_VALUE];
+        if (!empty($value)) {
+          
+        }
+      }
     }
-    if (!$data->expirynotify) {
-        // Keep previous/default value of disabled expirythreshold option.
-        $data->expirythreshold = $instance->expirythreshold;
-    }*/
+  }
+  
+    
     if ($instance->id) {
         $instance->roleid          = $data->roleid;
-        $instance->enrolperiod     = 0; //$data->enrolperiod;
-        $instance->expirynotify    = ''; //$data->expirynotify;
-        $instance->notifyall       = ''; //$data->notifyall;
-        $instance->expirythreshold =  0; //$data->expirythreshold;
+        // $instance->enrolperiod     = 0; //$data->enrolperiod;
+        // $instance->expirynotify    = ''; //$data->expirynotify;
+        // $instance->notifyall       = ''; //$data->notifyall;
+        // $instance->expirythreshold =  0; //$data->expirythreshold;
         $instance->timemodified    = time();
-
+        $instance->customtext1     = $storedfilters;
+    
         $DB->update_record('enrol', $instance);
 
         // Use standard API to update instance status.
@@ -106,10 +104,11 @@ if ($mform->is_cancelled()) {
         $fields = array(
             'status'          => $data->status,
             'roleid'          => $data->roleid,
-            'enrolperiod'     => 0, // $data->enrolperiod,
-            'expirynotify'    => '', // $data->expirynotify,
-            'notifyall'       => '', // $data->notifyall,
-            'expirythreshold' => 0); //$data->expirythreshold);
+            'customtext1'     => $storedfilters);
+            // 'enrolperiod'     => 0, // $data->enrolperiod,
+            // 'expirynotify'    => '', // $data->expirynotify,
+            // 'notifyall'       => '', // $data->notifyall,
+            // 'expirythreshold' => 0); //$data->expirythreshold);
         $plugin->add_instance($course, $fields);
     }
 
