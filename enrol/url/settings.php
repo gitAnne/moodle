@@ -31,31 +31,32 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_heading('enrol_url_exdbheader', get_string('settingsheaderurl', 'enrol_url'), ''));
 
-
-    // $settings->add(new admin_setting_heading('enrol_url_localheader', get_string('settingsheaderlocal', 'enrol_url'), ''));
-
-    $options = array('id'=>'id', 'idnumber'=>'idnumber', 'email'=>'email', 'username'=>'username', 'shortname'=>'shortname'); 
-    $settings->add(new admin_setting_configselect('enrol_url/filteruserfield1', get_string('filteruserfield1', 'enrol_url'), '', 'idnumber', $options));
-
-    $options = array('id'=>'id', 'idnumber'=>'idnumber', 'email'=>'email', 'username'=>'username', 'shortname'=>'shortname'); 
-    $settings->add(new admin_setting_configselect('enrol_url/filteruserfield2', get_string('filteruserfield2', 'enrol_url'), '', 'shortname', $options));
-
-    $options = array('id'=>'id', 'idnumber'=>'idnumber', 'email'=>'email', 'username'=>'username', 'shortname'=>'shortname'); 
-    $settings->add(new admin_setting_configselect('enrol_url/filteruserfield3', get_string('filteruserfield3', 'enrol_url'), '', 'email', $options));
-
-
-    // $settings->add(new admin_setting_heading('enrol_url_remoteheader', get_string('settingsheaderremote', 'enrol_url'), ''));
-
     if (!during_initial_install()) {
-        $options = get_default_enrol_roles(context_system::instance());
-        $student = get_archetype_roles('student');
-        $student = reset($student);
-        $settings->add(new admin_setting_configselect('enrol_url/defaultrole', get_string('defaultrole', 'enrol_url'), get_string('defaultrole_desc', 'enrol_url'), $student->id, $options));
+      $options = get_default_enrol_roles(context_system::instance());
+      $student = get_archetype_roles('student');
+      $student = reset($student);
+      $settings->add(new admin_setting_configselect('enrol_url/defaultrole', get_string('defaultrole', 'enrol_url'), get_string('defaultrole_desc', 'enrol_url'), $student->id, $options));
+      
+      $settings->add(new admin_setting_configselect('enrol_url/defaultcategory', get_string('defaultcategory', 'enrol_url'), get_string('defaultcategory_desc', 'enrol_url'), 1, make_categories_options()));
     }
-
-    if (!during_initial_install()) {
-        $settings->add(new admin_setting_configselect('enrol_url/defaultcategory', get_string('defaultcategory', 'enrol_url'), get_string('defaultcategory_desc', 'enrol_url'), 1, make_categories_options()));
+    
+    
+    $settings->add(new admin_setting_heading('enrol_url_localheader', get_string('settingsheaderlocal', 'enrol_url'), ''));
+    
+    $userfields = array('idnumber', 'firstname', 'lastname', 'email', 'institution', 'department', 'address', 'city', 'country', 'middlename', 'alternatename');
+    $options = array('none' => '');
+    foreach ($userfields as $field) {
+      $options[$field] = $field;
     }
+    
+    $settings->add(new admin_setting_configselect('enrol_url/filteruserfield1', get_string('filteruserfield1', 'enrol_url'), '', 'none', $options));
 
-    // $settings->add(new admin_setting_configtext('enrol_url/templatecourse', get_string('templatecourse', 'enrol_url'), get_string('templatecourse_desc', 'enrol_url'), ''));
+    $settings->add(new admin_setting_configselect('enrol_url/filteruserfield2', get_string('filteruserfield2', 'enrol_url'), '', 'none', $options));
+
+    $settings->add(new admin_setting_configselect('enrol_url/filteruserfield3', get_string('filteruserfield3', 'enrol_url'), '', 'none', $options));
+
+    $settings->add(new admin_setting_configselect('enrol_url/filteruserfield4', get_string('filteruserfield4', 'enrol_url'), '', 'none', $options));
+
+    $settings->add(new admin_setting_configselect('enrol_url/filteruserfield5', get_string('filteruserfield5', 'enrol_url'), '', 'none', $options));
+
 }
