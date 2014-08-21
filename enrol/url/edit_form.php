@@ -30,14 +30,22 @@ require_once($CFG->libdir.'/formslib.php');
 class enrol_url_edit_form extends moodleform {
 
     function definition() {
+        // Get the selected field filters
+        $plugin = enrol_get_plugin('url');
+        $filterfields = array();
+        for ($i=1; $i<=5; $i++) {
+          $filterfields[$i] = $plugin->get_config('filteruserfield' . $i); 
+        }
+      
         $mform = $this->_form;
 
         list($instance, $plugin, $context) = $this->_customdata;
 
-        $mform->addElement('header', 'header', get_string('pluginname', 'enrol_url'));
+        $mform->addElement('header', 'header', get_string('settingsheaderurl', 'enrol_url'));
 
         $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
                          ENROL_INSTANCE_DISABLED => get_string('no'));
+        
         $mform->addElement('select', 'status', get_string('status', 'enrol_url'), $options);
         $mform->addHelpButton('status', 'status', 'enrol_url');
         $mform->setDefault('status', $plugin->get_config('status'));
@@ -49,19 +57,37 @@ class enrol_url_edit_form extends moodleform {
         }
         $mform->addElement('select', 'roleid', get_string('defaultrole', 'role'), $roles);
         $mform->setDefault('roleid', $plugin->get_config('roleid'));
-/*
-        $mform->addElement('duration', 'enrolperiod', get_string('defaultperiod', 'enrol_url'), array('optional' => true, 'defaultunit' => 86400));
-        $mform->setDefault('enrolperiod', $plugin->get_config('enrolperiod'));
-        $mform->addHelpButton('enrolperiod', 'defaultperiod', 'enrol_url');
-
-        $options = array(0 => get_string('no'), 1 => get_string('expirynotifyenroller', 'core_enrol'), 2 => get_string('expirynotifyall', 'core_enrol'));
-        $mform->addElement('select', 'expirynotify', get_string('expirynotify', 'core_enrol'), $options);
-        $mform->addHelpButton('expirynotify', 'expirynotify', 'core_enrol');
-
-        $mform->addElement('duration', 'expirythreshold', get_string('expirythreshold', 'core_enrol'), array('optional' => false, 'defaultunit' => 86400));
-        $mform->addHelpButton('expirythreshold', 'expirythreshold', 'core_enrol');
-        $mform->disabledIf('expirythreshold', 'expirynotify', 'eq', 0);
-*/
+        
+        $mform->addElement('header', 'header', get_string('settingsheaderlocal', 'enrol_url'));
+        
+        if (isset($instance->customtext1) && !empty($instance->customtext1)) {
+          $storedfilters = unserialize($instance->customtext1);
+          
+          
+        }
+        
+        $cnt = 0;
+        $attributes = array('size' => '110', 'maxsize' => 255);
+        $filteroptions = array($plugin::FIELD_FILTER_NOT_CONTAINS => get_string('filterfield_option_not_contains', 'enrol_url'),
+                              $plugin::FIELD_FILTER_CONTAINS => get_string('filterfield_option_contains', 'enrol_url'),
+                              $plugin::FIELD_FILTER_IGNORE   => get_string('filterfield_option_ignore', 'enrol_url'));
+        foreach ($filterfields as $filterfield) {
+          if (!empty($filterfield) && ($filterfield != 'none')) {
+            $cnt++;
+            $filterarray = array();
+            $filterarray[] =& $mform->createElement('select', $filterfield . '[condition]', '', $filteroptions);
+            $filterarray[] =& $mform->createElement('text', $filterfield . '7', '', $attributes);
+            
+            $mform->addGroup($filterarray, 'filterar' . $cnt, $filterfield, array(' '), false);
+            
+            $mform->addHelpButton('filterar' . $cnt, 'filterfield', 'enrol_url');
+            $mform->setDefault($filterfield . '[condition]', ENROL_INSTANCE_DISABLED);
+            $mform->setType($filterfield . '7', PARAM_RAW);
+            $mform->setDefault($filterfield . '7', 'filtertext - ' . $cnt);
+            
+          }
+        }
+        
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
 
@@ -78,10 +104,6 @@ class enrol_url_edit_form extends moodleform {
         global $DB;
 
         $errors = parent::validation($data, $files);
-
-        /*if ($data['expirynotify'] > 0 and $data['expirythreshold'] < 86400) {
-            $errors['expirythreshold'] = get_string('errorthresholdlow', 'core_enrol');
-        }*/
 
         return $errors;
     }

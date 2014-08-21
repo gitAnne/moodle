@@ -37,7 +37,9 @@ $string['pluginname_desc'] = 'De URL enrolment kan gebruikt worden om iemand met
 $string['templatecourse'] = 'Templete cursus.';
 $string['templatecourse_desc'] = 'Optioneel: automatisch aangemaakt cursussen kunnen op basis van een template worden gemaakt..';
 
-$string['settingsheaderurl'] = 'Settings';
+$string['settingsheaderurl'] = 'Algemene settings';
+$string['settingsheaderlocal'] = 'Filter veld selectie';
+
 $string['status'] = 'Enable url enrolments';
 $string['status_desc'] = 'Allow course access of internally enrolled users. This should be kept enabled in most cases.';
 $string['status_help'] = 'This setting determines whether users can be enrolled manually, via a link in the course administration settings, by a user with appropriate permissions such as a teacher.';
@@ -49,3 +51,11 @@ $string['unenrolselectedusers'] = 'Unenrol selected users';
 $string['filteruserfield1'] = 'User field filter 1';
 $string['filteruserfield2'] = 'User field filter 2';
 $string['filteruserfield3'] = 'User field filter 3';
+$string['filteruserfield4'] = 'User field filter 4';
+$string['filteruserfield5'] = 'User field filter 5';
+
+$string['filterfield'] = 'Filter field';
+$string['filterfield_option_ignore'] = 'Ignore';
+$string['filterfield_option_contains'] = 'Contains';
+$string['filterfield_option_not_contains'] = 'Does NOT contain';
+$string['filterfield_help'] = 'Select which filter to apply for this field.<br/>If the user field does not meet the filter they will not be enrolled automatically<br/>Options are:<br/>Ignore - Filtering on this field is ignored,<br/>Contains - The (caseinsensative) text must be present in this field<br/>Does not contain - The (caseinsensative) text must NOT be present in this field';

@@ -32,6 +32,11 @@ defined('MOODLE_INTERNAL') || die();
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol_url_plugin extends enrol_plugin {
+  
+    const FIELD_FILTER_IGNORE = -1;
+    const FIELD_FILTER_CONTAINS = 1;
+    const FIELD_FILTER_NOT_CONTAINS = 0;
+    
     /**
      * Is it possible to delete enrol instance via standard UI?
      *

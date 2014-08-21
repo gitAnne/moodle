@@ -58,7 +58,8 @@ $string['pluginname_desc'] = 'You can use a URl to direct access a course. Given
 $string['templatecourse'] = 'Templete course.';
 $string['templatecourse_desc'] = 'Optional: auto-created courses can copy their settings from a template course. Type here the shortname of the template course.';
 
-$string['settingsheaderurl'] = 'Settings';
+$string['settingsheaderurl'] = 'Default Settings';
+$string['settingsheaderlocal'] = 'Filter field selection';
 
 $string['status'] = 'Enable url enrolments';
 $string['status_desc'] = 'Allow course access of internally enrolled users. This should be kept enabled in most cases.';
@@ -71,3 +72,10 @@ $string['unenrolselectedusers'] = 'Unenrol selected users';
 $string['filteruserfield1'] = 'User field filter 1';
 $string['filteruserfield2'] = 'User field filter 2';
 $string['filteruserfield3'] = 'User field filter 3';
+$string['filteruserfield4'] = 'User field filter 4';
+$string['filteruserfield5'] = 'User field filter 5';
+
+$string['filterfield'] = 'Filter field';$string['filterfield_option_ignore'] = 'Ignore';
+$string['filterfield_option_contains'] = 'Contains';
+$string['filterfield_option_not_contains'] = 'Does NOT contain';
+$string['filterfield_help'] = 'Select which filter to apply for this field.<br/>If the user field does not meet the filter they will not be enrolled automatically<br/>Options are:<br/>Ignore - Filtering on this field is ignored,<br/>Contains - The (caseinsensative) text must be present in this field<br/>Does not contain - The (caseinsensative) text must NOT be present in this field';
