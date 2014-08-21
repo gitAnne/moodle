@@ -30,6 +30,14 @@ if (!$validtoken) {
   redirect($baselogin);  
 }
 
+// Check if a password is present
+// If not log and die
+$passwordpresent = (isset($password) && (!empty($password)));
+if (!$passwordpresent) {
+  auth_url_log("User: '{$username}' provided no password (Request IP: " . getremoteaddr() . ")");
+  redirect($baselogin);  
+}
+
 // Check if username present and exists
 // If not log and die
 $validuser = false;
@@ -39,15 +47,8 @@ if (!empty($username)) {
 }
 if (!$validuser) {
   auth_url_log("Invalid user: '{$username}' (Request IP: " . getremoteaddr() . ")");
-  redirect($baselogin);  
-}
-
-// Check if a password is present
-// If not log and die
-$passwordpresent = (isset($password) && (!empty($password)));
-if (!$passwordpresent) {
-  auth_url_log("User: '{$username}' provided no password (Request IP: " . getremoteaddr() . ")");
-  redirect($baselogin);  
+  unset($user);
+  sendIncorrectCredentials($username, $password, $baselogin);
 }
 
 // Check if password is correct for the user
@@ -59,16 +60,7 @@ $auth_url = get_auth_plugin('url');
 $correctpassword = $auth_url->user_login($username, $password);
 if (!$correctpassword) {
   unset($user);
-  $config = get_config('auth_url');
-  
-  $errormess = "Username and password combination was not found!";
-  $incorrectcredentialsurl = $config->incorrectcredentialsurl;
-  $incorrectcredentialsurl = str_replace('{username}', $username, $incorrectcredentialsurl);
-  $incorrectcredentialsurl = str_replace('{password}', $password, $incorrectcredentialsurl);
-  $incorrectcredentialsurl = str_replace('{errorMessage}', $errormess, $incorrectcredentialsurl);
-  auth_url_log("User: '{$username}' provided wrong password: '{$password}' (Request IP: " . getremoteaddr() . ")");
-  postURL($incorrectcredentialsurl, array('username' => $username, 'password' => $password));
-  redirect($baselogin);  
+  sendIncorrectCredentials($username, $password, $baselogin);
 }
 
 // Check if courseid present and valid
@@ -188,6 +180,7 @@ function postURL($uri, $data) {
       $endTime = microtime(true);
       $endDateTime = time();
       $totalTime = $endTime - $startTime;
+      $postdata = implode(';', $postdata);
 
       $message = sprintf('start:%s end:%s time:%08.2fs uri: %s data: %s responsecode: %s', date('c', $startDateTime), date('c', $endDateTime), $totalTime, $uri, $postdata, $http_code);
       auth_url_log($message, DEBUG_NORMAL);
@@ -203,3 +196,17 @@ function postURL($uri, $data) {
   return $result;
 }
 
+function  sendIncorrectCredentials($username, $password, $baselogin) {
+  $config = get_config('auth_url');
+  
+  $errormess = "Username and password combination was not found!";
+  $incorrectcredentialsurl = $config->incorrectcredentialsurl;
+  $incorrectcredentialsurl = str_replace('{username}', $username, $incorrectcredentialsurl);
+  $incorrectcredentialsurl = str_replace('{password}', $password, $incorrectcredentialsurl);
+  $incorrectcredentialsurl = str_replace('{errorMessage}', $errormess, $incorrectcredentialsurl);
+  auth_url_log("User: '{$username}' provided wrong password: '{$password}' (Request IP: " . getremoteaddr() . ")");
+  postURL($incorrectcredentialsurl, array('username' => $username, 'password' => $password));
+  redirect($baselogin);
+  
+}
+ 
