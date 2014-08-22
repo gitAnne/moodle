@@ -23,11 +23,11 @@
  */
 
 $string['url:config'] = 'Configureer URL enrol instances';
-$string['url:unenrol'] = 'Unenrol suspended users';
+$string['url:unenrol'] = 'Verwijder geschorste gebruikers uit cursus';
 $string['debugdb'] = 'Debug ADOdb';
 $string['debugdb_desc'] = 'Debug ADOdb connection to external database - use when getting empty page during login. Not suitable for production sites!';
-$string['defaultcategory'] = 'Default new course category';
-$string['defaultcategory_desc'] = 'The default category for auto-created courses. Used when no new category id specified or not found.';
+$string['defaultcategory'] = 'Standaardcategorie voor nieuwe cursussen';
+$string['defaultcategory_desc'] = 'De standaarcategorie voor automatisch aangemaakte cursussen. Gebruikt wanneer er geen categorieID is opgegeven of wanneer die niet gevonden is.';
 $string['defaultrole'] = 'Default rol';
 $string['defaultrole_desc'] = 'De rol die wordt toegewezen bij het automatisch deelnemen aan een cursus.';
 $string['ignorehiddencourses'] = 'Negeer onzichtbare cursussen';
@@ -40,13 +40,13 @@ $string['templatecourse_desc'] = 'Optioneel: automatisch aangemaakt cursussen ku
 $string['settingsheaderurl'] = 'Algemene settings';
 $string['settingsheaderlocal'] = 'Filter veld selectie';
 
-$string['status'] = 'Enable url enrolments';
-$string['status_desc'] = 'Allow course access of internally enrolled users. This should be kept enabled in most cases.';
-$string['status_help'] = 'This setting determines whether users can be enrolled manually, via a link in the course administration settings, by a user with appropriate permissions such as a teacher.';
-$string['statusenabled'] = 'Enabled';
-$string['statusdisabled'] = 'Disabled';
-$string['unenrol'] = 'Unenrol user';
-$string['unenrolselectedusers'] = 'Unenrol selected users';
+$string['status'] = 'Zet url enrolments aan';
+$string['status_desc'] = 'Sta het inschrijven via de url methode toe. Dit zal over het algemeen aan moeten blijven staan.';
+$string['status_help'] = 'Deze instellingen bepalen of een gebruiker automatisch kan worden ingeschreven indien bepaalde veld waarden voldoen aan de opgegeven filters.';
+$string['statusenabled'] = 'Aan';
+$string['statusdisabled'] = 'Uit';
+$string['unenrol'] = 'Schrijf gebruiker uit';
+$string['unenrolselectedusers'] = 'Schrijf geselecteerde gebruikers uit';
 
 $string['filteruserfield1'] = 'User field filter 1';
 $string['filteruserfield2'] = 'User field filter 2';
@@ -55,7 +55,7 @@ $string['filteruserfield4'] = 'User field filter 4';
 $string['filteruserfield5'] = 'User field filter 5';
 
 $string['filterfield'] = 'Filter field';
-$string['filterfield_option_ignore'] = 'Ignore';
-$string['filterfield_option_contains'] = 'Contains';
-$string['filterfield_option_not_contains'] = 'Does NOT contain';
-$string['filterfield_help'] = 'Select which filter to apply for this field.<br/>If the user field does not meet the filter they will not be enrolled automatically<br/>Options are:<br/>Ignore - Filtering on this field is ignored,<br/>Contains - The (caseinsensative) text must be present in this field<br/>Does not contain - The (caseinsensative) text must NOT be present in this field';
+$string['filterfield_option_ignore'] = 'Negeer';
+$string['filterfield_option_contains'] = 'Bevat';
+$string['filterfield_option_not_contains'] = 'Bevat NIET';
+$string['filterfield_help'] = 'Selecteer welk filter moet worden toegepast voor het veld.<br/>Als de waarde(s) van de gebruiker (user) niet voldoet aan de 1 van de filters zal deze niet automatisch worden ingeschreven.<br/>Opties zijn:<br/>Negeer - Dit filter wordt niet gebruikt,<br/>Bevat - De (caseinsensative) waarde moet in het veld voor komen<br/>Bevat NIET - De (caseinsensative) waarde moet NIET in het veld voor komen';
