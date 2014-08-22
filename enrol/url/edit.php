@@ -68,26 +68,14 @@ if ($mform->is_cancelled()) {
     redirect($return);
 
 } else if ($data = $mform->get_data()) {
+  $storedfilters = '';
   if (isset($data->filterfields) && is_array($data->filterfields) && count($data->filterfields) > 0) {
+    $data->filterfields = $plugin->cleanfilters($data->filterfields);
     $storedfilters = serialize($data->filterfields);
-    foreach ($data->filterfields as $fieldname => $condition_def) {
-      if (isset($condition_def) && is_array($condition_def) && count($condition_def) == 2) {
-        $condition = $condition_def[$plugin::FIELD_FILTER_CONDITION];
-        $value = $condition_def[$plugin::FIELD_FILTER_VALUE];
-        if (!empty($value)) {
-          
-        }
-      }
-    }
   }
-  
     
     if ($instance->id) {
         $instance->roleid          = $data->roleid;
-        // $instance->enrolperiod     = 0; //$data->enrolperiod;
-        // $instance->expirynotify    = ''; //$data->expirynotify;
-        // $instance->notifyall       = ''; //$data->notifyall;
-        // $instance->expirythreshold =  0; //$data->expirythreshold;
         $instance->timemodified    = time();
         $instance->customtext1     = $storedfilters;
     
@@ -105,13 +93,8 @@ if ($mform->is_cancelled()) {
             'status'          => $data->status,
             'roleid'          => $data->roleid,
             'customtext1'     => $storedfilters);
-            // 'enrolperiod'     => 0, // $data->enrolperiod,
-            // 'expirynotify'    => '', // $data->expirynotify,
-            // 'notifyall'       => '', // $data->notifyall,
-            // 'expirythreshold' => 0); //$data->expirythreshold);
         $plugin->add_instance($course, $fields);
     }
-
     redirect($return);
 }
 
