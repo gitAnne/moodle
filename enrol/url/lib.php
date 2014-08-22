@@ -900,10 +900,6 @@ class enrol_url_plugin extends enrol_plugin {
 
         $icons = array();
 
-        /*if (has_capability('enrol/url:enrol', $context) or has_capability('enrol/url:unenrol', $context)) {
-            $managelink = new moodle_url("/enrol/url/manage.php", array('enrolid'=>$instance->id));
-            $icons[] = $OUTPUT->action_icon($managelink, new pix_icon('t/enrolusers', get_string('enrolusers', 'enrol_url'), 'core', array('class'=>'iconsmall')));
-        }*/
         if (has_capability('enrol/url:config', $context)) {
             $editlink = new moodle_url("/enrol/url/edit.php", array('courseid'=>$instance->courseid));
             $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
@@ -991,26 +987,7 @@ class enrol_url_plugin extends enrol_plugin {
         role_assign($roleid, $userid, $contextid, 'enrol_'.$this->get_name(), $instance->id);
     }
 
-    /**
-     * Test plugin settings, print info to output.
-     */
-    /*
-    public function test_settings() {
-        global $CFG, $OUTPUT;
-
-        // NOTE: this is not localised intentionally, admins are supposed to understand English at least a bit...
-
-        raise_memory_limit(MEMORY_HUGE);
-
-        $this->load_config();
-
-        $this->config->debugdb = $olddebugdb;
-        $CFG->debug = $olddebug;
-        ini_set('display_errors', $olddisplay);
-        error_reporting($CFG->debug);
-        ob_end_flush();
-    }*/
-    
+        
     /**
      * Attempt to automatically enrol current user in course without any interaction,
      * calling code has to make sure the plugin and instance are active.
@@ -1022,8 +999,92 @@ class enrol_url_plugin extends enrol_plugin {
      */
     public function try_autoenrol(stdClass $instance) {
       global $USER;
-      return true;
+      $isenrolled = false;
+      if (isset($USER) && ($USER !== false) && isset($instance) && ($instance->status == 0)) {
+        try {
+          // Check if enrolled
+          $courseid = $instance->courseid;
+          $context = context_course::instance($courseid, MUST_EXIST);
+          if (($USER != false) && is_enrolled($context, $USER->id)) {
+            $isenrolled = true;
+
+          } else {
+            // If not check if must be enrolled
+            // $plugin = enrol_get_plugin($instance->enrol);
+            $maybeenrolled = $this->maybeenrolled($instance, $USER);
+            if ($maybeenrolled) {
+              // if so, enroll
+              $roleid = $this->get_config('defaultrole');
+              
+              $timestart = time();
+              $isenrolled = enrol_try_internal_enrol($courseid, $USER->id, $roleid, $timestart);
+            }
+            
+          }
+        } catch (Exception $e) {
+          // silent
+        }
+
+      }
+      return $isenrolled;
+    }
+
+
+    public function maybeenrolled($instance, $user) {
+      $maybeenrolled = $this->checkfilter($instance, $user);
+      return $maybeenrolled;
     }
     
+    private function checkfilter($instance, $user) {
+      $passed  = false;
+      // Check if user fits filters
+      if (isset($instance)  && isset($user)) {
+        if (isset($instance->customtext1) && !empty($instance->customtext1)) {
+          $storedfilters = $instance->customtext1;
+          $filterfields = unserialize($storedfilters);
+          if (is_array($filterfields)) {
+            $passed  = true;
+            foreach ($filterfields as $fieldname => $condition_def) {
+              if (isset($condition_def) && is_array($condition_def) && count($condition_def) == 2) {
+                $condition = $condition_def[$this::FIELD_FILTER_CONDITION];
+                if ($condition != $this::FIELD_FILTER_IGNORE) {
+                  if (isset($user->$fieldname)) {
+                    $value = $condition_def[$this::FIELD_FILTER_VALUE];
+                    $uservalue = trim(strtolower($user->$fieldname));
+                    $contains = strpos($uservalue, $value);
+                    // If it should contain but doesn't: fail
+                    if (($condition == $this::FIELD_FILTER_CONTAINS) && ($contains === false)) {
+                      $passed = false;
+                      break;
+                    }
+                    // If it should not contain but does: fail
+                    if (($condition  == $this::FIELD_FILTER_NOT_CONTAINS) && ($contains !== false)) {
+                      $passed = false;
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      return $passed;
+    }
+    
+    
+    public function cleanfilters($filterfields) {
+      foreach ($filterfields as $fieldname => $condition_def) {
+        if (isset($condition_def) && is_array($condition_def) && count($condition_def) == 2) {
+          $condition = $condition_def[$this::FIELD_FILTER_CONDITION];
+          $value = $condition_def[$this::FIELD_FILTER_VALUE];
+          if (!empty($value)) {
+            $newvalue = trim(strtolower($value));
+            $filterfields[$fieldname][$this::FIELD_FILTER_VALUE] = $newvalue; 
+          }
+        }
+      }
+      return $filterfields;
+    }
     
 }
