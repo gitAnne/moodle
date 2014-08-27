@@ -2,6 +2,11 @@
 
 namespace auth_url;
 
+/*
+ * Get all defined SSO Apps from auth_url table
+ * 
+ * @return Array $ssoApps Array of records SSO Apps
+ */
 function getSsoApps() {
   global $DB;
   $ssoApps = $DB->get_records('auth_url');
@@ -12,6 +17,11 @@ function getSsoApps() {
 }
 
 
+/*
+ * Create HTML for displaying SSO App information
+ * 
+ * @return String $ssoapphtml The table html code for the SSO App info  
+ */
 function getSsoAppHtml() {
   global $CFG, $OUTPUT;
   include_once($CFG->libdir . '/outputcomponents.php');
@@ -59,6 +69,11 @@ function generateToken() {
 }
 
 
+/*
+ * Delete a SSO App from the auth_url table
+ * 
+ * @param int $deleteId The id of the record to delete
+ */
 function deleteSsoApp($deleteId) {
   global $DB;
   $DB->delete_records('auth_url', array('id' => $deleteId));
