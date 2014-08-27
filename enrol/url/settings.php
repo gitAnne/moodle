@@ -37,7 +37,8 @@ if ($ADMIN->fulltree) {
       $student = reset($student);
       $settings->add(new admin_setting_configselect('enrol_url/defaultrole', get_string('defaultrole', 'enrol_url'), get_string('defaultrole_desc', 'enrol_url'), $student->id, $options));
       
-      $settings->add(new admin_setting_configselect('enrol_url/defaultcategory', get_string('defaultcategory', 'enrol_url'), get_string('defaultcategory_desc', 'enrol_url'), 1, make_categories_options()));
+      // No longer set default category
+      // $settings->add(new admin_setting_configselect('enrol_url/defaultcategory', get_string('defaultcategory', 'enrol_url'), get_string('defaultcategory_desc', 'enrol_url'), 1, make_categories_options()));
     }
     
     
