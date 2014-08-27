@@ -4,8 +4,6 @@
 $conffile = dirname(dirname(dirname(__FILE__))) . "/config.php";
 include($conffile);
 
-include($CFG->dirroot . '/auth/url/classes/event/user_login_failed.php');
-
 // Get the parameters
 // Although they are not all optional, we do not want Moodle to through exceptions
 $token = optional_param('token', '', PARAM_RAW);
@@ -84,41 +82,61 @@ if ($user !== false) {
 // Post to that url using username and password
 // authurlredirect.php
 // $redirurl = $CFG->wwwroot . "/auth/url/authurlredirect.php?courseid={$courseid}";
-$redirurl =  $CFG->wwwroot . "/login/index.php?username={$username}&password={$password}&courseid={$courseid}";
 $redirurl =  $CFG->wwwroot . "/auth/url/authurlredirect.php?username={$username}&password={$password}&courseid={$courseid}";
 if (!empty($sectionid)) {
   $redirurl .= "&sectionid={$sectionid}";
 }
 
+// Currently not used
 $loginurl =  $CFG->wwwroot . "/login/index.php?username={$username}&password={$password}&courseid={$courseid}";
 if (!empty($sectionid)) {
   $loginurl .= "&sectionid={$sectionid}";
 }
 
-// redirect($redirurl, 'Redirect to course');
-// // redirect($loginurl, 'Redirect to course');
-
-// postURL($CFG->wwwroot . "/login/index.php", array('username' => $username, 'password' => $password, 'courseid' => $courseid));
 redirect($redirurl, 'Redirect to course');
 // never reached
 // die('App fail...');
 
 
 /*
+ * Logging
+ * 
  * DEBUG_NONE DEBUG_MINIMAL DEBUG_NORMAL DEBUG_ALL DEBUG_DEVELOPER
+ * 
+ * @param $logtext Text to log
+ * @param $loglevel Debug level to log at. If current debug leel is lower, do not log.
+ * 
 */
 function auth_url_log($logtext, $loglevel = DEBUG_NONE) {
   global $CFG;
   $curLogLevel = $CFG->debug;
-  // Always log level <DEBUG_NONE
-  if ($loglevel <= DEBUG_NONE) {
-    $event = \auth_url\event\user_login_failed::create(array('other' => array('reason' => $logtext)));
-    $event->trigger();
-
-  } elseif ($loglevel <= $curLogLevel) {
-    // Log all levels <= to set level
-    $event = \auth_url\event\user_login_failed::create(array('other' => array('reason' => $logtext)));
-    $event->trigger();
+  // If new event handling is present, use it
+  if (class_exists('\core\event\base')) {
+    include_once($CFG->dirroot . '/auth/url/classes/event/user_login_failed.php');
+    // Always log level <DEBUG_NONE
+    if ($loglevel <= DEBUG_NONE) {
+      $event = \auth_url\event\user_login_failed::create(array('other' => array('reason' => $logtext)));
+      $event->trigger();
+    
+    } elseif ($loglevel <= $curLogLevel) {
+      // Log all levels <= to set level
+      $event = \auth_url\event\user_login_failed::create(array('other' => array('reason' => $logtext)));
+      $event->trigger();
+    }
+    
+  } else {
+    // Use old type logging
+    if ($loglevel <= DEBUG_NONE) {
+      add_to_log(SYSCONTEXTID, "local_as2m", "update", "", $logtext);
+      
+    } elseif ($loglevel <= $curLogLevel) {
+      // Log all levels <= to set level
+      // If log text is too big (> 250), split it
+      $logtexts = str_split ($logtext, 250);
+      foreach ($logtexts as $logt) {
+        add_to_log(SYSCONTEXTID, "local_as2m", "update", "", $logt);
+      }
+    }
   }
 }
 
