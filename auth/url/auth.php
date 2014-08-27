@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/authlib.php');
 
-include_once($CFG->dirroot . '/auth/url/classes/event/user_login_failed.php');
+// include_once($CFG->dirroot . '/auth/url/classes/event/user_login_failed.php');
 $incfile = $CFG->dirroot . '/auth/url/locallib.php';
 include_once($incfile);
 
@@ -73,7 +73,6 @@ class auth_plugin_url extends auth_plugin_base {
         if (!$user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
             return false;
         }
-        // $succes = ($user->password == $password);
         $plainpassword = $this->get_plain_password($password);
         if (!validate_internal_user_password($user, $plainpassword)) {
          return false;
