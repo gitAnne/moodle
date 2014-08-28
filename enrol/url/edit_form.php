@@ -95,7 +95,7 @@ class enrol_url_edit_form extends moodleform {
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
 
-        if (enrol_accessing_via_instance($instance)) {
+        if (function_exists('enrol_accessing_via_instance') && enrol_accessing_via_instance($instance)) {
             $mform->addElement('static', 'selfwarn', get_string('instanceeditselfwarning', 'core_enrol'), get_string('instanceeditselfwarningtext', 'core_enrol'));
         }
 
